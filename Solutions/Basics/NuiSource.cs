@@ -19,9 +19,11 @@
         private DepthGenerator depthGenerator;
         private DepthMetaData depthMetadata;
         private WriteableBitmap depthImage;
-        private int[] depthHistogram; 
+        private int[] depthHistogram;
 
-        public NuiSource()
+        private static readonly NuiSource CurrentSource = new NuiSource();
+
+        private NuiSource()
         {
             context = new Context("openni.xml");
 
@@ -47,6 +49,14 @@
             var userGenerator = new UserGenerator(context);
             userGenerator.NewUser += this.UserGenerator_NewUser;
             userGenerator.LostUser += this.UserGenerator_LostUser;
+        }
+
+        public static NuiSource Current
+        {
+            get
+            {
+                return CurrentSource;
+            }
         }
 
         private void UserGenerator_LostUser(ProductionNode node, uint id)

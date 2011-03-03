@@ -1,0 +1,6 @@
+﻿<Window x:Class="Eyeball.VideoWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="VideoWindow" Height="520" Width="660">
+    <Image Name="imgCamera" Width="640" Height="480" />
+</Window>

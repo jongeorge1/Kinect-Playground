@@ -1,20 +1,16 @@
-namespace Eyeball
+namespace Eyeball.TargetPointGenerators
 {
     using System;
-    using System.Runtime.InteropServices;
     using System.Timers;
     using System.Windows;
-    using System.Windows.Forms;
 
-    using Timer = System.Timers.Timer;
-
-    public class MouseTargetPointGenerator : ITargetPointGenerator
+    public abstract class SamplingTargetPointGenerator : ITargetPointGenerator
     {
         public event EventHandler<TargetPointChangedEventArgs> TargetPointChanged;
 
         private Timer workerTimer;
 
-        public MouseTargetPointGenerator(int samplesPerSecond)
+        public SamplingTargetPointGenerator(int samplesPerSecond)
         {
             workerTimer = new Timer(1000 / samplesPerSecond) { AutoReset = true, Enabled = true };
             workerTimer.Elapsed += this.WorkerTimerElapsed;
@@ -22,10 +18,12 @@ namespace Eyeball
 
         private void WorkerTimerElapsed(object sender, ElapsedEventArgs e)
         {
-            var currentPosition = new Point(Cursor.Position.X, Cursor.Position.Y);
+            var currentPosition = this.GetCurrentPosition();
             
             this.OnTargetPointChanged(new TargetPointChangedEventArgs{ Point = currentPosition });
         }
+
+        protected abstract Point? GetCurrentPosition();
 
         protected void OnTargetPointChanged(TargetPointChangedEventArgs e)
         {

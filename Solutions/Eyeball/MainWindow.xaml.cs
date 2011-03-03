@@ -8,6 +8,8 @@
     using System.Windows.Media;
     using System.Windows.Shapes;
 
+    using Eyeball.TargetPointGenerators;
+
     /// <summary>
     ///   Interaction logic for MainWindow.xaml
     /// </summary>
@@ -127,7 +129,8 @@
             this.IrisScaleTransform.ScaleX = IrisScaleInitial;
             this.IrisScaleTransform.ScaleY = IrisScaleInitial;
 
-            this.targetPointGenerator = new MouseTargetPointGenerator(25);
+            //this.targetPointGenerator = new MouseTargetPointGenerator(25);
+            this.targetPointGenerator = new NuiSourceTargetPointGenerator(25);
         }
 
         // simple wrapper to return either empty strings of values from IDictionary
@@ -167,9 +170,37 @@
         private void TargetPointGenerator_TargetPointChanged(object sender, TargetPointChangedEventArgs e)
         {
             // Get position of point relative to that of eye interaction canvas
-            var relativeTarget = e.Point;
+            var relativeTarget = new Point(0, 0);
+            
+            this.EyeInteraction.Dispatcher.Invoke(new Action(() =>
+                {
+                    try
+                    {
+                        if (e.Point.HasValue)
+                        {
+                            relativeTarget = this.EyeInteraction.PointFromScreen(e.Point.Value);
+                        }
+                        else
+                        {
+                            relativeTarget = new Point(0, 0);
+                        }
+                    }
+                    catch
+                    {
+                    }
+                }));
 
-            this.debug.Dispatcher.Invoke(new Action(() => this.debug.Text = string.Format("{0}, {1}", e.Point.X, e.Point.Y)));
+            this.debug.Dispatcher.Invoke(new Action(() =>
+                {
+                    if (e.Point.HasValue)
+                    {
+                        this.debug.Text = string.Format("{0}, {1}", e.Point.Value.X, e.Point.Value.Y);
+                    }
+                    else
+                    {
+                        this.debug.Text = "No point returned.";
+                    }
+                }));
 
             // Move eye)
             this.AdjustEye(relativeTarget, 40.0, -10.0, 25.0);

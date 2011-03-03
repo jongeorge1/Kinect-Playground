@@ -1,4 +1,4 @@
-namespace Eyeball
+namespace Eyeball.TargetPointGenerators
 {
     using System;
 

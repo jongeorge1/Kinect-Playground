@@ -1,25 +1,25 @@
 ﻿using System.Windows;
 
-namespace Basics
+namespace Eyeball
 {
     using System;
     using System.ComponentModel;
     using System.Windows.Media;
 
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for VideoWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class VideoWindow : Window
     {
         private readonly BackgroundWorker bgWorker;
 
-        private readonly NuiSource nuiSource;
+        private readonly NuiSource.NuiSource nuiSource;
 
-        public MainWindow()
+        public VideoWindow()
         {
             InitializeComponent();
 
-            nuiSource = NuiSource.Current;
+            nuiSource = NuiSource.NuiSource.Current;
 
             bgWorker = new BackgroundWorker();
             bgWorker.DoWork += Worker_DoWork;
