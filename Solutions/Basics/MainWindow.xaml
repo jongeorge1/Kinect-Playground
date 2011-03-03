@@ -1,0 +1,9 @@
+﻿<Window x:Class="Basics.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Kinect Basics" Height="600" Width="800">
+    <Grid>
+        <Button Content="Switch to Depth" Height="23" HorizontalAlignment="Left" Margin="10,10,0,0" Name="switchView" VerticalAlignment="Top" Width="168" Click="switchView_Click" />
+        <Image Name="imgCamera" Width="640" Height="480" />
+    </Grid>
+</Window>
