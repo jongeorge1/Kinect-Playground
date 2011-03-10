@@ -129,7 +129,7 @@
             this.IrisScaleTransform.ScaleX = IrisScaleInitial;
             this.IrisScaleTransform.ScaleY = IrisScaleInitial;
 
-            //this.targetPointGenerator = new MouseTargetPointGenerator(25);
+            //this.targetPointGenerator = new MouseTargetPointGenerator(this.LayoutRoot);
             this.targetPointGenerator = new NuiSourceTargetPointGenerator(25);
         }
 
@@ -162,9 +162,9 @@
         /// </summary>
         private void EyeShadow_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            this.RandomiseEyeColour();
-            this.UpdateEyeColour();
-            this.UnDialate.Begin();
+            //this.RandomiseEyeColour();
+            //this.UpdateEyeColour();
+            //this.UnDialate.Begin();
         }
 
         private void TargetPointGenerator_TargetPointChanged(object sender, TargetPointChangedEventArgs e)
@@ -178,7 +178,9 @@
                     {
                         if (e.Point.HasValue)
                         {
-                            relativeTarget = this.EyeInteraction.PointFromScreen(e.Point.Value);
+                            relativeTarget = e.Point.Value;
+                            debug.Text = string.Format("{0}, {1}", e.Point.Value.X, e.Point.Value.Y);
+                            //relativeTarget = this.EyeInteraction.PointFromScreen(e.Point.Value);
                         }
                         else
                         {
@@ -191,7 +193,7 @@
                 }));
 
             // Move eye)
-            this.AdjustEye(relativeTarget, 40.0, -10.0, 25.0);
+            this.AdjustEye(relativeTarget, 40.0, -15.0, 15.0);
         }
 
 /// <summary>
@@ -314,6 +316,11 @@
         {
             this.MainEyeColour.Color = this.EyeColour;
             this.DrawIrisPattern();
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

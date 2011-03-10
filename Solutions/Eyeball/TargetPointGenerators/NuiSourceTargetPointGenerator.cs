@@ -20,9 +20,9 @@ namespace Eyeball.TargetPointGenerators
                 return null;
             }
 
-            var com = NuiSource.Current.GetRealWorldCoordinatesForPlayer(players.First());
+            var com = NuiSource.Current.GetProjectedCoordinatesForPlayer(players.First());
 
-            return new Point(com.X, com.Y);
+            return new Point(com.X - 240, com.Y - 140);
         }
     }
 }

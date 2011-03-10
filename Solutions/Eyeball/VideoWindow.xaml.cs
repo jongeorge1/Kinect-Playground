@@ -35,24 +35,27 @@ namespace Eyeball
         {
             Dispatcher.BeginInvoke((Action)delegate
                     {
-                        imgCamera.Source = nuiSource.CameraImage;
-
-                        if (this.nuiSource.PlayersInOrderOfAppearance.Count() > 0)
+                        try
                         {
-                            var firstPlayer = this.nuiSource.PlayersInOrderOfAppearance.First();
+                            imgCamera.Source = nuiSource.CameraImage;
 
-                            var projectedCoordinates = nuiSource.GetProjectedCoordinatesForPlayer(firstPlayer);
-                            var realWorldCoordinates = nuiSource.GetRealWorldCoordinatesForPlayer(firstPlayer);
+                            if (this.nuiSource.PlayersInOrderOfAppearance.Count() > 0)
+                            {
+                                var firstPlayer = this.nuiSource.PlayersInOrderOfAppearance.First();
 
-                            realWorld.Text = string.Format("{0:0.0}, {1:0.0}, {2:0.0}", realWorldCoordinates.X, realWorldCoordinates.Y, realWorldCoordinates.Z);
-                            projected.Text = string.Format("{0:0.0}, {1:0.0}, {2:0.0}", projectedCoordinates.X, projectedCoordinates.Y, projectedCoordinates.Z);
+                                var projectedCoordinates = nuiSource.GetProjectedCoordinatesForPlayer(firstPlayer);
+                                var realWorldCoordinates = nuiSource.GetRealWorldCoordinatesForPlayer(firstPlayer);
+
+                                realWorld.Text = string.Format("{0:0.0}, {1:0.0}, {2:0.0}", realWorldCoordinates.X, realWorldCoordinates.Y, realWorldCoordinates.Z);
+                                projected.Text = string.Format("{0:0.0}, {1:0.0}, {2:0.0}", projectedCoordinates.X, projectedCoordinates.Y, projectedCoordinates.Z);
+                            }
+                            else
+                            {
+                                realWorld.Text = "No current player.";
+                                projected.Text = "No current player.";
+                            }
                         }
-                        else
-                        {
-                            realWorld.Text = "No current player.";
-                            projected.Text = "No current player.";
-                        }
-                        
+                        catch { }
                     });
         }
 

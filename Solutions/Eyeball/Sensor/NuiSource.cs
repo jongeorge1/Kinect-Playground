@@ -132,6 +132,20 @@
                             }
                         }
                     }
+                    
+                    /*
+                    if (this.playersInOrderOfAppearance.Count > 0)
+                    {
+                        var position = this.GetProjectedCoordinatesForPlayer(this.playersInOrderOfAppearance[0]);
+                        var playerRect = new Int32Rect(0, 0, 2, 2);
+                        depthImage.WritePixels(playerRect, new byte[] { 
+                            0, 0, 255, 0, 
+                            0, 0, 255, 0, 
+                            0, 0, 255, 0, 
+                            0, 0, 255, 0, 
+                        }, 4, (int)position.X, (int)position.Y);
+                    }
+                    */
 
                     this.depthImage.AddDirtyRect(new Int32Rect(0, 0, this.depthMetadata.XRes, this.depthMetadata.YRes));
                     this.depthImage.Unlock();
