@@ -12,8 +12,10 @@ namespace Eyeball.TargetPointGenerators
 
         public SamplingTargetPointGenerator(int samplesPerSecond)
         {
-            workerTimer = new Timer(1000 / samplesPerSecond) { AutoReset = true, Enabled = true };
+            workerTimer = new Timer(1000 / samplesPerSecond);
             workerTimer.Elapsed += this.WorkerTimerElapsed;
+            workerTimer.AutoReset = false;
+            workerTimer.Start();
         }
 
         private void WorkerTimerElapsed(object sender, ElapsedEventArgs e)
@@ -21,6 +23,8 @@ namespace Eyeball.TargetPointGenerators
             var currentPosition = this.GetCurrentPosition();
             
             this.OnTargetPointChanged(new TargetPointChangedEventArgs{ Point = currentPosition });
+
+            workerTimer.Start();
         }
 
         protected abstract Point? GetCurrentPosition();

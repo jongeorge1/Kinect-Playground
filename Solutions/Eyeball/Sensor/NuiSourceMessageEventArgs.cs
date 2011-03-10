@@ -1,4 +1,4 @@
-namespace Eyeball.NuiSource
+namespace Eyeball.Sensor
 {
     using System;
 

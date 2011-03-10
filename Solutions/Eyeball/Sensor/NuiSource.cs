@@ -1,15 +1,16 @@
-﻿namespace Eyeball.NuiSource
+﻿namespace Eyeball.Sensor
 {
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Threading;
     using System.Windows;
-    using System.Windows.Forms;
     using System.Windows.Media;
     using System.Windows.Media.Imaging;
 
     using xn;
+
+    using Point3D = System.Windows.Media.Media3D.Point3D;
 
     public class NuiSource
     {
@@ -29,11 +30,11 @@
 
         private readonly ImageMetaData imageMetadata;
 
+        private readonly List<uint> playersInOrderOfAppearance = new List<uint>();
+
         private readonly UserGenerator userGenerator;
 
         private int[] depthHistogram;
-
-        private List<uint> playersInOrderOfAppearance = new List<uint>();
 
         private NuiSource()
         {
@@ -42,6 +43,7 @@
             // Initialise generators
             this.imageGenerator = this.context.FindExistingNode(NodeType.Image) as ImageGenerator;
             this.depthGenerator = this.context.FindExistingNode(NodeType.Depth) as DepthGenerator;
+            this.depthGenerator.GetAlternativeViewPointCap().SetViewPoint(this.imageGenerator);
 
             this.userGenerator = new UserGenerator(this.context);
             this.imageMetadata = new ImageMetaData();
@@ -57,16 +59,24 @@
             this.depthImage = new WriteableBitmap(
                 (int)depthMapMode.nXRes, (int)depthMapMode.nYRes, 96, 96, PixelFormats.Rgb24, null);
 
+            // Initialise user generator
             this.userGenerator.NewUser += this.UserGenerator_NewUser;
             this.userGenerator.LostUser += this.UserGenerator_LostUser;
             this.userGenerator.StartGenerating();
+            this.ShowPlayerLabels = true;
 
             // Initialise background thread
             var cameraThread = new Thread(this.CameraThread) { IsBackground = true };
             cameraThread.Start();
         }
 
+        public event EventHandler<EventArgs> ClosestUserChanged;
+
         public event EventHandler<NuiSourceMessageEventArgs> Message;
+
+        public event EventHandler<EventArgs> UserFound;
+
+        public event EventHandler<EventArgs> UserLost;
 
         public static NuiSource Current
         {
@@ -88,6 +98,7 @@
                         this.imageMetadata.ImageMapPtr,
                         (int)this.imageMetadata.DataSize,
                         this.cameraImage.BackBufferStride);
+
                     this.cameraImage.Unlock();
                 }
 
@@ -130,6 +141,22 @@
             }
         }
 
+        public double HorizontalDepthOfField
+        {
+            get
+            {
+                return this.depthGenerator.GetFieldOfView().fHFOV;
+            }
+        }
+
+        public int MaximumDepth
+        {
+            get
+            {
+                return this.depthGenerator.GetDeviceMaxDepth();
+            }
+        }
+
         public IEnumerable<uint> PlayersInOrderOfAppearance
         {
             get
@@ -138,25 +165,38 @@
             }
         }
 
-        public Point GetScreenCoordinatesForPlayer(uint player)
+        public bool ShowPlayerLabels { get; set; }
+
+        public double VerticalDepthOfField
         {
-            const int sourceWidth = 1280;
-            const int sourceHeight = 960;
+            get
+            {
+                return this.depthGenerator.GetFieldOfView().fVFOV;
+            }
+        }
 
-            var screenX = Screen.PrimaryScreen.Bounds.Width;
-            var screenY = Screen.PrimaryScreen.Bounds.Height;
+        public Point3D GetProjectedCoordinatesForPlayer(uint player)
+        {
+            var realWorldCom = this.userGenerator.GetCoM(player);
+            var com = this.depthGenerator.ConvertRealWorldToProjective(realWorldCom);
 
-            var screenXMultiplier = (double)screenX / sourceWidth;
-            var screenYMultiplier = -(double)screenY / sourceHeight;
+            return new Point3D(com.X, com.Y, com.Z);
+        }
 
+        public Point3D GetRealWorldCoordinatesForPlayer(uint player)
+        {
+            var realWorldCom = this.userGenerator.GetCoM(player);
 
-            var com = this.userGenerator.GetCoM(player);
+            return new Point3D(realWorldCom.X, realWorldCom.Y, realWorldCom.Z);
+        }
 
-            // Quick and dirty translation
-            var x = com.X * screenXMultiplier + (sourceWidth / 2);
-            var y = com.Y * screenYMultiplier + (sourceHeight / 4);
-
-            return new Point(x, y);
+        protected void OnClosestUserChanged()
+        {
+            var handler = this.ClosestUserChanged;
+            if (handler != null)
+            {
+                handler(this, EventArgs.Empty);
+            }
         }
 
         protected void OnMessage(string message)
@@ -165,6 +205,24 @@
             if (handler != null)
             {
                 handler(this, new NuiSourceMessageEventArgs { Message = message });
+            }
+        }
+
+        protected void OnUserFound()
+        {
+            var handler = this.UserFound;
+            if (handler != null)
+            {
+                handler(this, EventArgs.Empty);
+            }
+        }
+
+        protected void OnUserLost()
+        {
+            var handler = this.UserLost;
+            if (handler != null)
+            {
+                handler(this, EventArgs.Empty);
             }
         }
 
@@ -225,12 +283,14 @@
         {
             this.playersInOrderOfAppearance.Remove(id);
             this.OnMessage("Lost player with Id " + id);
+            this.OnUserLost();
         }
 
         private void UserGenerator_NewUser(ProductionNode node, uint id)
         {
             this.playersInOrderOfAppearance.Add(id);
             this.OnMessage("New player detected and assigned Id " + id);
+            this.OnUserFound();
         }
     }
 }

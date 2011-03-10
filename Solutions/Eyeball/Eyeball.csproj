@@ -65,8 +65,8 @@
       <DependentUpon>MessageWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="TargetPointGenerators\MouseTargetPointGenerator.cs" />
-    <Compile Include="NuiSource\NuiSource.cs" />
-    <Compile Include="NuiSource\NuiSourceMessageEventArgs.cs" />
+    <Compile Include="Sensor\NuiSource.cs" />
+    <Compile Include="Sensor\NuiSourceMessageEventArgs.cs" />
     <Compile Include="RGB.cs" />
     <Compile Include="TargetPointGenerators\NuiSourceTargetPointGenerator.cs" />
     <Compile Include="TargetPointGenerators\SamplingTargetPointGenerator.cs" />

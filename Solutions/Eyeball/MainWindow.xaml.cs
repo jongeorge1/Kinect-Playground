@@ -190,18 +190,6 @@
                     }
                 }));
 
-            this.debug.Dispatcher.Invoke(new Action(() =>
-                {
-                    if (e.Point.HasValue)
-                    {
-                        this.debug.Text = string.Format("{0}, {1}", e.Point.Value.X, e.Point.Value.Y);
-                    }
-                    else
-                    {
-                        this.debug.Text = "No point returned.";
-                    }
-                }));
-
             // Move eye)
             this.AdjustEye(relativeTarget, 40.0, -10.0, 25.0);
         }

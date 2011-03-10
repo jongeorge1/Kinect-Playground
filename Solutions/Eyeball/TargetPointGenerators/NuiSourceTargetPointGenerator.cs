@@ -1,8 +1,9 @@
 namespace Eyeball.TargetPointGenerators
 {
-    using System;
     using System.Linq;
     using System.Windows;
+
+    using Eyeball.Sensor;
 
     public class NuiSourceTargetPointGenerator : SamplingTargetPointGenerator
     {
@@ -13,14 +14,15 @@ namespace Eyeball.TargetPointGenerators
 
         protected override Point? GetCurrentPosition()
         {
-            var players = NuiSource.NuiSource.Current.PlayersInOrderOfAppearance;
+            var players = NuiSource.Current.PlayersInOrderOfAppearance;
             if (players.Count() == 0)
             {
                 return null;
             }
 
-            var com = NuiSource.NuiSource.Current.GetScreenCoordinatesForPlayer(players.First());
-            return com;
+            var com = NuiSource.Current.GetRealWorldCoordinatesForPlayer(players.First());
+
+            return new Point(com.X, com.Y);
         }
     }
 }

@@ -129,7 +129,7 @@
             <Ellipse x:Name="DirectInfluence" Width="100" Height="100" Stroke="Yellow" Canvas.Left="40" Canvas.Top="40" StrokeThickness="2.0" />
         </Canvas>
         <Canvas Canvas.Left="-100" Width="600" Height="20" Background="Black" Visibility="Visible">
-            <TextBlock x:Name="debug"  Foreground="Yellow" Text="--" ></TextBlock>
+            <TextBlock x:Name="debug"  Foreground="Yellow" Text="--" Visibility="Hidden"></TextBlock>
         </Canvas>
         <Canvas Canvas.ZIndex="100" Width="230" Height="230" x:Name="EyeInteraction"  Canvas.Left="-25" Canvas.Top="-25" Background="Transparent"/>
         <Canvas Canvas.ZIndex="101" Width="500" Height="300" x:Name="EyeInteractionTop"  Canvas.Left="-125" Canvas.Top="-25" Background="Transparent" MouseLeftButtonUp="EyeShadow_MouseLeftButtonUp"/>

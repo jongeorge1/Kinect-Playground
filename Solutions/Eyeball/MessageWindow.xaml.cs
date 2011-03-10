@@ -15,7 +15,7 @@ namespace Eyeball
 {
     using System.IO;
 
-    using Eyeball.NuiSource;
+    using Eyeball.Sensor;
 
     /// <summary>
     /// Interaction logic for MessageWindow.xaml
@@ -26,7 +26,7 @@ namespace Eyeball
         {
             InitializeComponent();
 
-            NuiSource.NuiSource.Current.Message += this.Current_Message;
+            Sensor.NuiSource.Current.Message += this.Current_Message;
         }
 
         void Current_Message(object sender, NuiSourceMessageEventArgs e)
